@@ -16,7 +16,6 @@ import java.util.*
 class OuterAdapter : RecyclerView.Adapter<OuterAdapter.OuterViewHolder>() {
     private lateinit var list: List<List<Input>>
     private lateinit var changeListener: (String, Int) -> Unit
-    private var count = 0
 
     fun setTextListener(listener: (String, Int) -> Unit) {
         changeListener = listener
@@ -43,7 +42,8 @@ class OuterAdapter : RecyclerView.Adapter<OuterAdapter.OuterViewHolder>() {
         fun bind() {
             val displayMetrics = binding.root.context.resources.displayMetrics
             for (i in list[adapterPosition]) {
-                val ind = count
+                if(!this@OuterAdapter::changeListener.isInitialized)
+                    changeListener = {_,_->}
                 val params: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
                     displayMetrics.widthPixels - 150,
                     (60*displayMetrics.density).toInt()
@@ -62,7 +62,7 @@ class OuterAdapter : RecyclerView.Adapter<OuterAdapter.OuterViewHolder>() {
                         editText.layoutParams = params
 
                         editText.doOnTextChanged { text, _, _, _ ->
-                            changeListener(text.toString(), ind)
+                            changeListener(text.toString(), i.fieldId)
                         }
                         addView(editText)
                         val imageParams: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
@@ -89,7 +89,7 @@ class OuterAdapter : RecyclerView.Adapter<OuterAdapter.OuterViewHolder>() {
                                     { _, year, month, dayOfMonth ->
                                         val text = "$dayOfMonth.${month + 1}.$year"
                                         btn.text = text
-                                        changeListener(text, ind)
+                                        changeListener(text, i.fieldId)
                                     },
                                     myYear,
                                     myMonth,
@@ -114,7 +114,7 @@ class OuterAdapter : RecyclerView.Adapter<OuterAdapter.OuterViewHolder>() {
                                     p2: Int,
                                     p3: Long
                                 ) {
-                                    changeListener(list[p2],ind)
+                                    changeListener(list[p2],i.fieldId)
                                 }
                                 override fun onNothingSelected(p0: AdapterView<*>?){}
                             }
@@ -122,7 +122,6 @@ class OuterAdapter : RecyclerView.Adapter<OuterAdapter.OuterViewHolder>() {
                         }
                     }
                 }
-                count++
             }
         }
     }

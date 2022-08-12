@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log.d
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -28,13 +29,19 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
+        d("testcrt", "created")
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         collect()
         setOnBtnClick()
+
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        collect()
+    }
     private fun collect() {
         lifecycleScope.launch(mainDispatcher) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -44,6 +51,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
     }
 
     private fun initRecycler(){
